@@ -14,21 +14,23 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
-          java-version: '11'  # Adjust to your Java version
+          java-version: '11'
 
-      - name: Install Android SDK
+      - name: Install Android SDK Command-Line Tools
         run: |
-          mkdir -p $HOME/android-sdk
-          cd $HOME/android-sdk
+          mkdir -p $HOME/android-sdk/cmdline-tools
+          cd $HOME/android-sdk/cmdline-tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-6609375_latest.zip
           unzip commandlinetools-linux-6609375_latest.zip
+          rm commandlinetools-linux-6609375_latest.zip
           yes | $HOME/android-sdk/cmdline-tools/bin/sdkmanager --sdk_root=$HOME/android-sdk --install "platform-tools" "platforms;android-29" "build-tools;29.0.3"
-        env:
-          ANDROID_HOME: $HOME/android-sdk
+
+      - name: Set environment variables
+        run: echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
 
       - name: Build with Gradle
-        run: ./gradlew assembleDebug  # Adjust as needed
+        run: ./gradlew assembleDebug
         env:
           ANDROID_HOME: $HOME/android-sdk
