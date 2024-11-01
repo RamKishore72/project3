@@ -16,16 +16,22 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
-          java-version: '11'
+          java-version: '11'  # Adjust as needed
 
       - name: Install Android SDK Command-Line Tools
         run: |
+          # Create directory for Android SDK
           mkdir -p $HOME/android-sdk/cmdline-tools
           cd $HOME/android-sdk/cmdline-tools
+          # Download the command-line tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-6609375_latest.zip
           unzip commandlinetools-linux-6609375_latest.zip
           rm commandlinetools-linux-6609375_latest.zip
-          yes | $HOME/android-sdk/cmdline-tools/bin/sdkmanager --sdk_root=$HOME/android-sdk --install "platform-tools" "platforms;android-29" "build-tools;29.0.3"
+          # Update the path to the cmdline-tools
+          export ANDROID_HOME=$HOME/android-sdk
+          export PATH=$PATH:$ANDROID_HOME/cmdline-tools/bin
+          # Install required SDK components
+          yes | $ANDROID_HOME/cmdline-tools/bin/sdkmanager --sdk_root=$ANDROID_HOME --install "platform-tools" "platforms;android-29" "build-tools;29.0.3"
 
       - name: Set environment variables
         run: echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
